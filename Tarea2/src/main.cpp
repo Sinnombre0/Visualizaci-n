@@ -16,6 +16,8 @@ const char* vertexShaderSource = R"(
     void main()
     {
         //TODO
+        gl_Position = vec4(aPos, 1.0);
+        vertexColor = aColor;
     }
 )";
 
@@ -28,6 +30,7 @@ const char* fragmentShaderSource = R"(
     void main()
     {
         //TODO
+        FragColor = vec4(vertexColor, 1.0);
     }
 )";
 
@@ -59,13 +62,19 @@ void generateSierpinski(int n, Point a, Point b, Point c, std::vector<float>& ve
     if (n == 1) {
         // TODO
         // Se generan los tres colores aleatorios (entre 0 y 1)
+        // Primer color
+        float c1 = (float)rand() / RAND_MAX;
+        float c2 = (float)rand() / RAND_MAX;
+        float c3 = (float)rand() / RAND_MAX;
 
         // Se guarda el primer vértice
-
+        vertices.insert(vertices.end(), {a.x, a.y, 0.0f, c1, c1, c1});
 
         // Se guarda el segundo vértice
+        vertices.insert(vertices.end(), {b.x, b.y, 0.0f, c2, c2, c2});
 
         // Se guarda el tercer vértice
+        vertices.insert(vertices.end(), {c.x, c.y, 0.0f, c3, c3, c3});
 
 
         return;
@@ -196,11 +205,11 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
     //TODO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, //TODO , //TODO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     //TODO
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, //TODO, //TODO);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
@@ -221,7 +230,7 @@ int main()
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
         //TODO
-        glDrawArrays(GL_TRIANGLES, 0, //TODO);
+        glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
 
         // Swap buffers and poll IO events
         glfwSwapBuffers(window);
